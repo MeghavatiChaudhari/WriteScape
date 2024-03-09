@@ -6,12 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export default function PostForm({ post }) {
+    console.log(post)
     const { register, handleSubmit, watch, setValue, control, getValues } = useForm({
         defaultValues: {
-            title: post?.title || "",
-            slug: post?.$id || "",
-            content: post?.content || "",
-            status: post?.status || "active",
+            Title: post?.Title || "",
+            Slug: post?.$id || "",
+            Content: post?.Content || "",
+            Status: post?.Status || "active",
         },
     });
 
@@ -19,11 +20,11 @@ export default function PostForm({ post }) {
     const userData = useSelector((state) => state.auth.userData);
 
     const submit = async (data) => {
+        console.log(data);
         if (post) {
-            const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
-
+            const file = data.image && data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
             if (file) {
-                appwriteService.deleteFile(post.featuredImage);
+                appwriteService.deleteFile(post.FeaturedImage);
             }
 
             const dbPost = await appwriteService.updatePost(post.$id, {
@@ -35,12 +36,13 @@ export default function PostForm({ post }) {
                 navigate(`/post/${dbPost.$id}`);
             }
         } else {
-            const file = await appwriteService.uploadFile(data.image[0]);
+            const file = await appwriteService.uploadFile(data.image && data.image[0]);
+
 
             if (file) {
                 const fileId = file.$id;
-                data.featuredImage = fileId;
-                const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id });
+                data.FeaturedImage = fileId;
+                const dbPost = await appwriteService.createPost({ ...data, UerId: userData.$id });
 
                 if (dbPost) {
                     navigate(`/post/${dbPost.$id}`);
@@ -62,8 +64,8 @@ export default function PostForm({ post }) {
 
     React.useEffect(() => {
         const subscription = watch((value, { name }) => {
-            if (name === "title") {
-                setValue("slug", slugTransform(value.title), { shouldValidate: true });
+            if (name === "Title") {
+                setValue("Slug", slugTransform(value.Title), { shouldValidate: true });
             }
         });
 
@@ -77,18 +79,18 @@ export default function PostForm({ post }) {
                     label="Title :"
                     placeholder="Title"
                     className="mb-4"
-                    {...register("title", { required: true })}
+                    {...register("Title", { required: true })}
                 />
                 <Input
                     label="Slug :"
                     placeholder="Slug"
                     className="mb-4"
-                    {...register("slug", { required: true })}
+                    {...register("Slug", { required: true })}
                     onInput={(e) => {
-                        setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
+                        setValue("Slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
                     }}
                 />
-                <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
+                <RTE label="Content :" name="Content" control={control} defaultValue={getValues("Content")} />
             </div>
             <div className="w-1/3 px-2">
                 <Input
@@ -101,8 +103,8 @@ export default function PostForm({ post }) {
                 {post && (
                     <div className="w-full mb-4">
                         <img
-                            src={appwriteService.getFilePreview(post.featuredImage)}
-                            alt={post.title}
+                            src={appwriteService.getFilePreview(post.FeaturedImage)}
+                            alt={post.Title}
                             className="rounded-lg"
                         />
                     </div>

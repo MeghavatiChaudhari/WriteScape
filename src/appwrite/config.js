@@ -24,10 +24,12 @@ export class Service{
             Slug,
             {
                 Title,
+                Slug,
                 Content,
                 FeaturedImage,
                 Status,
                 UserId,
+                
             }
         )
         }catch(error){

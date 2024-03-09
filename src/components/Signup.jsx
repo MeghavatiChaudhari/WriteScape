@@ -3,7 +3,7 @@ import authService from "../appwrite/auth";
 import { Link,useNavigate } from "react-router-dom";
 import { login } from "../store/authSlice";
 import {Button,Input,Plogo} from './index';
-import { UseDispatch, useDispatch } from "react-redux";
+import {useDispatch } from "react-redux";
 import {useForm} from 'react-hook-form';
 
 function Signup(){
@@ -15,10 +15,12 @@ function Signup(){
     const create=async(data)=>{
         setError("")
         try{
-        const userData = await authService.CreateAccount(data);
+        const userData = await authService.createAccount(data);
         if(userData){
             const userData = await authService.getCurrentUser();
-            if(userData) dispatch(login(userData))
+            if(userData){
+                 dispatch(login(userData))
+            } 
             navigate("/")
         }
         }catch(error){
@@ -32,7 +34,7 @@ function Signup(){
             <div  className={`mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10`}>
               <div className="mb-2 flex justify-center">
               <span className="inline-block w-full max-w-[100px]">
-                        <Logo width="100%" />
+                        <Plogo width="100%" />
                     </span>
               </div>
               <h2 className="text-center text-2xl font-bold leading-tight">Sign up to create account</h2>
